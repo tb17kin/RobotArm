@@ -16,8 +16,6 @@
 // float m6;
 
 int flag = 0;
-// int inByte = 0;
-// String str;
 int SA = 0;
 Servo servo;
 String serial_recv;
@@ -28,6 +26,9 @@ const int PIN_SERVO = 10;
 int val=180;
 int PULSE_WIDTH;
 int val_before;
+
+// 時刻のミリ秒の測定
+unsigned long previousTime = 0;
 
 void setup() {
   // アームがまっすぐな位置(たぶん)
@@ -44,30 +45,28 @@ void setup() {
   
   pinMode(LED,OUTPUT);
   pinMode(PIN_SERVO,OUTPUT);
-  // str = Serial.readString();
-  // Serial.println(str);
-  // Serial.println("B");
 }
 
 void loop() {
-  if(Serial.available() > 0){
-      //serial_recv = Serial.read(); // シリアル通信を受信
-      line = Serial.readStringUntil(';');
-      line_len = line.length();
-      if((line_len >= 1) && (line_len <= 3)) {
-        val = line.toInt();
-        Serial.println(val);
-      }
-      }
-  if(val == 0){
-      val = val_before;
-    }
-  PULSE_WIDTH = map(val,0,180,500,2400);
-      digitalWrite(PIN_SERVO,HIGH);
-      delayMicroseconds(PULSE_WIDTH);
-      digitalWrite(PIN_SERVO,LOW);
-  val_before = val;
 
-  // 第３関節(m4)の動き
-  // Braccio.ServoMovement(20, m1, m2, m3, m4, m5, m6);
+  unsigned long currentTime = millis();
+
+    if(Serial.available() > 0){
+        line = Serial.readStringUntil(';');
+        line_len = line.length();
+        if((line_len >= 1) && (line_len <= 3)) {
+          val = line.toInt();
+          Serial.println(val);
+        }
+        }
+    if(val == 0){
+        val = val_before;
+      }
+    PULSE_WIDTH = map(val,0,180,500,2400);
+        digitalWrite(PIN_SERVO,HIGH);
+        delayMicroseconds(PULSE_WIDTH);
+        digitalWrite(PIN_SERVO,LOW);
+    val_before = val;
+    // 第３関節(m4)の動き
+    // Braccio.ServoMovement(20, m1, m2, m3, m4, m5, m6);
 }
