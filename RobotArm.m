@@ -2,17 +2,18 @@ clear
 close all
 clc
 
-p = 0;
 % camera setting(Calibration)
 
 % Get coordinates
 
-
+% Serial Communication to Arduino
 s=serialport('COM4',9600);
 pause(2);
-% Serial Communication to Arduino
-for i=1:9
+p = 0;
+DD_before = "100;";
+for i=1:10
 
+    % DD = PIDControl(Ball, r);
     switch p
     case 0
         DD = "60;";
@@ -25,8 +26,14 @@ for i=1:9
         p = 0;   
     end
 
-    writeline(s,DD);
-    pause(0.5);
+    Str = "S;"+ DD + DD_before + "\n"
+    % writeline(s, DD);
+    writeline(s, Str);
+    DD_before = DD;
+    pause(2);
     flush(s); %メモリリセット
 end
 clear s
+
+function u = PIDControl(m, r)
+end

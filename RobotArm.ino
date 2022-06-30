@@ -8,24 +8,22 @@
 // Servo wrist_rot;
 // Servo gripper;
 
-// float m1;
-// float m2;
-// float m3;
-// float m4;
-// float m5;
-// float m6;
+int m1 = 0;
+int m2 = 0;
+int m3 = 0;
+float m4;
+float m5;
+int m6 = 0;
 
-int flag = 0;
-int SA = 0;
+// int flag = 0;
 Servo servo;
 String serial_recv;
 String line;
 int line_len;
-const int LED = 13;
 const int PIN_SERVO = 10;
-int val=180;
+float val=180;
 int PULSE_WIDTH;
-int val_before;
+float val_before;
 
 // 時刻のミリ秒の測定
 unsigned long previousTime = 0;
@@ -43,7 +41,6 @@ void setup() {
 
   Serial.begin(9600);
   
-  pinMode(LED,OUTPUT);
   pinMode(PIN_SERVO,OUTPUT);
 }
 
@@ -52,12 +49,22 @@ void loop() {
   unsigned long currentTime = millis();
 
     if(Serial.available() > 0){
-        line = Serial.readStringUntil(';');
-        line_len = line.length();
-        if((line_len >= 1) && (line_len <= 3)) {
-          val = line.toInt();
-          Serial.println(val);
+        line = Serial.readStringUntil('\n');
+        int index = line.indexOf(';');
+        String sta = line.substring(0, index);
+        if(sta.equals(String('S'))) {
+          line.remove(0, index + 1);
+          int index_m4 = line.indexOf(';');
+          String str_m4 = line.substring(0, index_m4);
+          line.remove(0, index_m4 + 1);
+          int index_m5 = line.indexOf(';');
+          String str_m5 = line.substring(0, index_m5);
+          m4 = str_m4.toFloat();
+          m5 = str_m5.toFloat();
+          val = m5;
         }
+        
+
         }
     if(val == 0){
         val = val_before;
