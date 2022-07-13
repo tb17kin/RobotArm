@@ -40,7 +40,7 @@ void loop() {
   unsigned long currentTime = millis();
   if(currentTime - previousTime > 500){
     Serial.println(flag);
-    delay(10);
+    delay(100);
     SendValue();
     previousTime = currentTime;
   }
