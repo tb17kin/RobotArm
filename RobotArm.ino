@@ -1,5 +1,6 @@
 #include <Braccio.h>
 #include <Servo.h>
+#include <Arduino_JSON.h>
 
 Servo base;
 Servo shoulder;
@@ -8,22 +9,15 @@ Servo wrist_ver;
 Servo wrist_rot;
 Servo gripper;
 
-int m1 = 0;
-int m2 = 0;
-float m3;
-int m4 = 0;
-float m5;
-int m6 = 0;
-
-// int flag = 0;
+int m1;
+int m2;
+int m3;
+int m4;
+int m5;
+int m6;
+int t = 0;
+String flag = "A";
 Servo servo;
-String serial_recv;
-String line;
-int line_len;
-const int PIN_SERVO = 10;
-float val=180;
-int PULSE_WIDTH;
-float val_before;
 
 // 時刻のミリ秒の測定
 unsigned long previousTime = 0;
@@ -43,24 +37,20 @@ void setup() {
 }
 
 void loop() {
-
   unsigned long currentTime = millis();
+  if(currentTime - previousTime > 500){
+    Serial.println(flag);
+    delay(500);
+    SendValue();
+    previousTime = currentTime;
+  }
+}
 
-    if(Serial.available() > 0){
-      line = Serial.readStringUntil('\n');
-      int index = line.indexOf(';');
-      String sta = line.substring(0, index);
-      if(sta.equals(String('S'))) {
-        line.remove(0, index + 1);
-        int index_m3 = line.indexOf(';');
-        String str_m3 = line.substring(0, index_m3);
-        line.remove(0, index_m3 + 1);
-        int index_m5 = line.indexOf(';');
-        String str_m5 = line.substring(0, index_m5);
-        m3 = str_m3.toFloat();
-        m5 = str_m5.toFloat();
-      }
-    }
-    // 第３関節(m4)の動き
-    Braccio.ServoMovement(20, m1, m2, m3, m4, m5, m6);
+void SendValue(){
+  String line = Serial.readStringUntil('\n');
+  JSONVar obj = JSON.parse(line);
+  m3 = obj["m3"];
+  m5 = obj["m5"];
+  // 第３関節(m4)の動き
+  Braccio.ServoMovement(20, 0, 102, m3, 83, m5, 30);
 }
