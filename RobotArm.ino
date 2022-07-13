@@ -23,6 +23,9 @@ Servo servo;
 unsigned long previousTime = 0;
 
 void setup() {
+  Braccio.begin();
+
+  Serial.begin(9600);
   // アームがまっすぐな位置(たぶん)
   m1 = 0;
   m2 = 102;
@@ -31,16 +34,13 @@ void setup() {
   m5 = 85;
   m6 = 30;
   
-  Braccio.begin();
-
-  Serial.begin(9600);
 }
 
 void loop() {
   unsigned long currentTime = millis();
   if(currentTime - previousTime > 500){
     Serial.println(flag);
-    delay(500);
+    delay(10);
     SendValue();
     previousTime = currentTime;
   }

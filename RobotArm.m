@@ -15,7 +15,8 @@ p = 0;
 DD_before = "100";
 global FlagSerial;
 FlagSerial = 0;
-for i=1:100
+% for i=1:1000
+while(1)
     
     configureCallback(s, "terminator", @readSerialData);
 
@@ -34,16 +35,16 @@ for i=1:100
             p = 0;   
         end
 
-        Str = jsonencode(struct('m3',DD,'m5',DD_before));
+        Str = jsonencode(struct('m3',DD,'m5',DD_before))
         writeline(s, Str);
-        pause(0.5);
+        pause(0.05);
         DD_before = DD;
         flush(s); %メモリリセット
         FlagSerial = 0;
     end
     pause(0.01);
 end
-% clear s
+clear s
 
 function readSerialData(src, evt)
     global FlagSerial
