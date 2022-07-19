@@ -1,56 +1,52 @@
-#include <Braccio.h>
 #include <Servo.h>
 #include <Arduino_JSON.h>
 
-Servo base;
-Servo shoulder;
-Servo elbow;
-Servo wrist_ver;
-Servo wrist_rot;
-Servo gripper;
-
-int m1;
-int m2;
-int m3;
-int m4;
-int m5;
-int m6;
-int t = 0;
 String flag = "A";
-Servo servo;
+int u1;
+int u2;
+
+int PULSE_WIDTH_m3;
+int PULSE_WIDTH_m5;
+const int PIN_m3 = 9;
+const int PIN_m5 = 5;
+const int PIN = 12;
 
 // 時刻のミリ秒の測定
 unsigned long previousTime = 0;
 
 void setup() {
-  Braccio.begin();
 
   Serial.begin(9600);
-  // アームがまっすぐな位置(たぶん)
-  m1 = 0;
-  m2 = 102;
-  m3 = 108;
-  m4 = 83;
-  m5 = 85;
-  m6 = 30;
-  
+
+  pinMode(PIN, OUTPUT);
+  pinMode(PIN_m3, OUTPUT);
+  pinMode(PIN_m5, OUTPUT);
+  digitalWrite(PIN, HIGH);
 }
 
 void loop() {
   unsigned long currentTime = millis();
+
   if(currentTime - previousTime > 500){
     Serial.println(flag);
-    delay(100);
+    delay(50);
     SendValue();
     previousTime = currentTime;
   }
+
 }
 
 void SendValue(){
   String line = Serial.readStringUntil('\n');
   JSONVar obj = JSON.parse(line);
-  m3 = obj["m3"];
-  m5 = obj["m5"];
-  // 第３関節(m4)の動き
-  Braccio.ServoMovement(20, 0, 102, m3, 83, m5, 30);
+  u1 = obj["u1"];
+  u2 = obj["u2"];
+  PULSE_WIDTH_m3 = map(u1, 0, 180, 500, 2400);
+  PULSE_WIDTH_m5 = map(u2, 0, 180, 500, 2400);
+  digitalWrite(PIN_m3, HIGH);
+  delayMicroseconds(PULSE_WIDTH_m3);
+  digitalWrite(PIN_m3, LOW);
+  digitalWrite(PIN_m5, HIGH);
+  delayMicroseconds(PULSE_WIDTH_m5);
+  digitalWrite(PIN_m5, LOW);
 }

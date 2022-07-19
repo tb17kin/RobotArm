@@ -9,19 +9,17 @@ clc
 % Serial Communication to Arduino
 s = serialport('COM4',9600);
 disp("ポートを開きました");
-pause(10);
-disp("ループに入ります");
-T = tic;
+pause(2);
+
 p = 0;
 DD_before = "100";
 global FlagSerial;
 FlagSerial = 0;
-% for i=1:1000
+
 while(1)
     configureCallback(s, "terminator", @readSerialData);
     if(FlagSerial > 0)
     % DD = PIDControl(Ball, r);
-    T = tic;
         switch p
         case 0
             DD = 130;
@@ -34,7 +32,7 @@ while(1)
             p = 0;   
         end
 
-        Str = jsonencode(struct('m3',DD,'m5',DD_before))
+        Str = jsonencode(struct('u1',DD,'u2',DD_before));
         writeline(s, Str);
         pause(0.05);
         DD_before = DD;
@@ -42,7 +40,6 @@ while(1)
         FlagSerial = 0;
     end
     pause(0.01);
-    T = toc;
 end
 clear s
 
