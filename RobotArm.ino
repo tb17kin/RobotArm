@@ -5,11 +5,10 @@ String flag = "A";
 int u1;
 int u2;
 
-int PULSE_WIDTH_m3;
-int PULSE_WIDTH_m5;
-const int PIN_m3 = 9;
-const int PIN_m5 = 5;
-const int PIN = 12;
+Servo PIN_m1;
+Servo PIN_m2;
+Servo PIN_m3;
+Servo PIN_m5;
 
 // 時刻のミリ秒の測定
 unsigned long previousTime = 0;
@@ -18,22 +17,24 @@ void setup() {
 
   Serial.begin(9600);
 
-  pinMode(PIN, OUTPUT);
-  pinMode(PIN_m3, OUTPUT);
-  pinMode(PIN_m5, OUTPUT);
-  digitalWrite(PIN, HIGH);
+// ピンを触れるようにする
+  digitalWrite(12, HIGH);
+  PIN_m1.attach(11);
+  PIN_m2.attach(10);
+  PIN_m3.attach(9);
+  PIN_m5.attach(5);
 }
 
 void loop() {
+  // 時間管理
   unsigned long currentTime = millis();
 
   if(currentTime - previousTime > 500){
-    Serial.println(flag);
+    Serial.println(flag); // フラグをMATLAB側に送信
     delay(50);
-    SendValue();
+    SendValue(); // 受信した値をモータに指令する
     previousTime = currentTime;
   }
-
 }
 
 void SendValue(){
@@ -41,12 +42,8 @@ void SendValue(){
   JSONVar obj = JSON.parse(line);
   u1 = obj["u1"];
   u2 = obj["u2"];
-  PULSE_WIDTH_m3 = map(u1, 0, 180, 500, 2400);
-  PULSE_WIDTH_m5 = map(u2, 0, 180, 500, 2400);
-  digitalWrite(PIN_m3, HIGH);
-  delayMicroseconds(PULSE_WIDTH_m3);
-  digitalWrite(PIN_m3, LOW);
-  digitalWrite(PIN_m5, HIGH);
-  delayMicroseconds(PULSE_WIDTH_m5);
-  digitalWrite(PIN_m5, LOW);
+  PIN_m1.write(102);
+  PIN_m2.write(108);
+  PIN_m3.write(u1);
+  PIN_m5.write(u2);
 }
