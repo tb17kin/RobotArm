@@ -27,3 +27,8 @@ m5 = 5
 m6 = 3
 
 です．またPIN12は起動時にHIGHになるように設定する．
+
+MATLABのツール
+computer vision toolbox
+support package for usb webcams
+の二つがあれば，コードを動かすことができると思います．
