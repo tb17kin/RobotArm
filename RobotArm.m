@@ -16,7 +16,7 @@ global FlagSerial;
 FlagSerial = 0;
 
 % 制御用の値
-r = [140; 110]; % 目標値
+r = [107; 85]; % 目標値
 dt = 0.04; % カメラのサンプリング周期(仮)
 
 low_before = 0;
@@ -26,8 +26,8 @@ global SumI
 SumI = 0;
 
 % 1行1列が何mmか
-dx = 0.458;
-dy = 0.445;
+dx = 0.4479;
+dy = 0.2578;
 
 % 制御用のループ
 while(1)
@@ -58,6 +58,8 @@ while(1)
 
         [xi, phi] = PIDControl(x, y, x_before, y_before, dt, r);
 
+        % xi = xi + 20;
+        % phi = phi + 85;
         % json形式で書き，文字列にする
         Str = jsonencode(struct('u1',xi,'u2',phi))
         writeline(s, Str); % シリアルに書き込む
@@ -78,9 +80,11 @@ function readSerialData(src, evt)
 end
 
 function [xi, phi] = PIDControl(x, y, x_before, y_before, dt, r)
-    Kp = 0.03;
-    Ki = 0.01;
-    Kd = 0.01;
+    Kp = 0.12;
+    % Ki = 0.03;
+    % Kd = 0.03;
+    Ki = 0;
+    Kd = 0;
     e = r - [x; y];
     P = Kp * e;
     global SumI
@@ -88,16 +92,16 @@ function [xi, phi] = PIDControl(x, y, x_before, y_before, dt, r)
     I = Ki * SumI;
     D = Kd * (r - ([x; y] - [x_before;y_before]))/dt;
     u = P + I + D;
-    xi = u(1,1);
-    phi = u(2,1);
-    if(xi > 140)
-        xi = 140;
-    elseif(xi < 30)
-        xi = 30;
+    xi = u(1,1) + 65;
+    phi = -u(2,1) + 120;
+    if(xi > 75)
+        xi = 75;
+    elseif(xi < 55)
+        xi = 55;
     end
-    if(phi > 140)
-        phi = 140;
-    elseif(phi < 30)
-        phi = 30;
+    if(phi > 130)
+        phi = 130;
+    elseif(phi < 110)
+        phi = 110;
     end
 end

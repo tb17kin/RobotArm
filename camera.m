@@ -13,8 +13,8 @@ img = snapshot(cam);
 image(img);
 
 % 画角が何mmか
-xl = 220;
-yl = 285;
+xl = 215;
+yl = 165;
 
 dx = xl / 480;
 dy = yl / 640;

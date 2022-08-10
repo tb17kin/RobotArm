@@ -23,6 +23,11 @@ void setup() {
   PIN_m2.attach(10);
   PIN_m3.attach(9);
   PIN_m5.attach(5);
+  
+  PIN_m1.write(102);
+  PIN_m2.write(110);
+  PIN_m3.write(50);
+  PIN_m5.write(120);
 }
 
 void loop() {
@@ -43,7 +48,7 @@ void SendValue(){
   u1 = obj["u1"];
   u2 = obj["u2"];
   PIN_m1.write(102);
-  PIN_m2.write(108);
+  PIN_m2.write(110);
   PIN_m3.write(u1);
   PIN_m5.write(u2);
 }
